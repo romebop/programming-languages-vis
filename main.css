@@ -17,9 +17,18 @@
   margin-left: 100px;
 }
 
-#paradigmSelect {
+#paradigmContainer {
   margin-left: 100px;
+}
+
+#paradigmLabel {
   margin-top: 10px;
+  display: inline-block;
+}
+
+#paradigmSelect {
+  margin-left: 5px;
+  display: inline-block;
 }
 
 #chart {
