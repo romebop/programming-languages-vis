@@ -97,14 +97,14 @@ d3.json('data.json', function(error,dataset) {
         return d['name'];
       })
       .attr('x', function(d) {
-        return xScale(d['year'] + domain_length*0.01);
+        return xScale(d['year'] + domain_length*0.008);
       })
       .attr('y', function(d) {
         return yScale(d['nbRepos']);
       })
       .attr('font-family', 'sans-serif')
       .attr('font-size', '14px')
-      .attr('fill', '#2ecc71')
+      .attr('fill', '#2c3e50')
       .attr('class', 'name');
 
     circle.exit().transition().duration(500).delay(0).style('opacity', 0).remove();
@@ -140,11 +140,13 @@ d3.json('data.json', function(error,dataset) {
     chart.append('text')
       .attr('text-anchor', 'middle')  // this makes it easy to centre the text as the transform is applied to the anchor
       .attr('transform', 'translate(' + -margin.left/1.5 + ',' + (height/2) + ')rotate(-90)')  // text is drawn off the screen top left, move down and out and rotate
+      .attr('fill', '#2c3e50')
       .text('Number of Repositories (log scale)');
 
     chart.append('text')
       .attr('text-anchor', 'middle')  // this makes it easy to centre the text as the transform is applied to the anchor
       .attr('transform', 'translate(' + (width/2) + ',' + (height + (margin.bottom/2)) + ')')  // centre below axis
+      .attr('fill', '#2c3e50')
       .text('Year (First Appearance)');
 
   };
