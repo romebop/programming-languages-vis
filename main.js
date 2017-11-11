@@ -110,6 +110,8 @@ d3.json('data.json', function(error,dataset) {
     circle.exit().transition().duration(500).delay(0).style('opacity', 0).remove();
     name.exit().transition().duration(500).delay(0).style('opacity', 0).remove();
 
+    //axis stuff
+
     var axis = chart.selectAll('.axis');
     axis.transition().duration(500).delay(500).style('opacity', 0).remove();
 
