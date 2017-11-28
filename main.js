@@ -8,57 +8,54 @@ var chart = d3.select('#chart')
   .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-var allParadigms;
-var selected_paradigm;
+// compute the set of all paradigms in the data set
+d3.json('data.json', function(error, dataset) {
 
-//compute the set of all paradigms in the data set
-d3.json('data.json', function(error,dataset) {
-
-  allParadigms = _.map(dataset, function(d) {
+  var allParadigms = _.map(dataset, function(d) {
     return d['paradigms'];
   });
 
   allParadigms = _.flatten(allParadigms);
   allParadigms = _.uniq(allParadigms);
-  
-  //add all paradigms to HTML select element
+
+  // add all paradigms to HTML select element
   d3.select('body').select('#paradigmSelect').selectAll('option').data(allParadigms).enter().append('option')
-    .text(function(d){ return d;})
-    .attr('value', function(d){ return d;});
+    .text(function(d){ return d; })
+    .attr('value', function(d){ return d; });
 
-  selected_paradigm = allParadigms[0];
+  var selected_paradigm = allParadigms[0];
 
-  //code for interaction with paradigm selection
+  // code for interaction with paradigm selection
   document.getElementById('paradigmSelect').onchange = function () {
-    
+
     var selected_paradigm = this.value;
 
-    //filter dataset according to selected paradigm membership
-    var filtered_data = dataset.filter(function(d){
+    // filter dataset according to selected paradigm membership
+    var filtered_data = dataset.filter(function(d) {
       return d['paradigms'].indexOf(selected_paradigm) > -1;
     });
 
-    var max = d3.max(filtered_data, function(d) {return d['year']});
-    var min = d3.min(filtered_data, function(d) {return d['year']});
-    var domain_length = max - min; 
+    var x_min = d3.min(filtered_data, function(d) { return d['year']} );
+    var x_max = d3.max(filtered_data, function(d) { return d['year']} );
+    var x_length = x_max - x_min;
+    var x_buffer = x_length ? x_length * 0.1 : 3;
 
-    //set up the scale for x and y 
+    var y_min = d3.min(filtered_data, function(d) { return d['nbRepos'] });
+    var y_max = d3.max(filtered_data, function(d) { return d['nbRepos'] });
+    var y_length = y_max - y_min;
+    var y_buffer = 2;
+
+    // set up the scale for x and y dimensions
     var xScale = d3.scale.linear()
-      .domain([
-        d3.min(filtered_data, function(d) {return d['year']}),
-        d3.max(filtered_data, function(d) {return d['year']})
-        ])
+      .domain([ x_min - x_buffer, x_max + x_buffer ])
       .range([0, width]);
 
     var yScale = d3.scale.log()
-      .domain([
-        d3.min(filtered_data, function(d) {return d['nbRepos']}),
-        d3.max(filtered_data, function(d) {return d['nbRepos']})
-        ])
+      .domain([ y_min / y_buffer, y_max * y_buffer ])
       .range([height, 0]);
 
-    //bind circle data here
-    var circle = chart.selectAll('circle').data(filtered_data, function(d){
+    // bind circle data here
+    var circle = chart.selectAll('circle').data(filtered_data, function(d) {
         return d['name'];
       });
 
@@ -86,7 +83,7 @@ d3.json('data.json', function(error,dataset) {
 
     name.transition().duration(500).delay(500)
       .attr('x', function(d) {
-        return xScale(d['year'] + domain_length*0.01);
+        return xScale(d['year']) + (width * 0.008);
       })
       .attr('y', function(d) {
         return yScale(d['nbRepos']);
@@ -97,7 +94,7 @@ d3.json('data.json', function(error,dataset) {
         return d['name'];
       })
       .attr('x', function(d) {
-        return xScale(d['year'] + domain_length*0.008);
+        return xScale(d['year']) + (width * 0.008);
       })
       .attr('y', function(d) {
         return yScale(d['nbRepos']);
@@ -110,7 +107,7 @@ d3.json('data.json', function(error,dataset) {
     circle.exit().transition().duration(500).delay(0).style('opacity', 0).remove();
     name.exit().transition().duration(500).delay(0).style('opacity', 0).remove();
 
-    //axis stuff
+    // axis stuff
 
     var axis = chart.selectAll('.axis');
     axis.transition().duration(500).delay(500).style('opacity', 0).remove();
@@ -126,11 +123,11 @@ d3.json('data.json', function(error,dataset) {
       .style('opacity', 0)
       .transition().duration(500).delay(500).style('opacity', 1)
       .call(xAxis);
-    
+
     var yAxis = d3.svg.axis()
       .scale(yScale)
       .orient('left')
-      .ticks(7);
+      .ticks(15);
 
     chart.append('g')
       .attr('class', 'axis')
@@ -140,7 +137,7 @@ d3.json('data.json', function(error,dataset) {
       .call(yAxis);
 
     chart.append('text')
-      .attr('text-anchor', 'middle')  // this makes it easy to centre the text as the transform is applied to the anchor
+      .attr('text-anchor', 'middle')  // this makes it easy to center the text as the transform is applied to the anchor
       .attr('transform', 'translate(' + -margin.left/1.5 + ',' + (height/2) + ')rotate(-90)')  // text is drawn off the screen top left, move down and out and rotate
       .attr('fill', '#2c3e50')
       .text('Number of Repositories (log scale)');
@@ -149,7 +146,7 @@ d3.json('data.json', function(error,dataset) {
       .attr('text-anchor', 'middle')  // this makes it easy to centre the text as the transform is applied to the anchor
       .attr('transform', 'translate(' + (width/2) + ',' + (height + (margin.bottom/2)) + ')')  // centre below axis
       .attr('fill', '#2c3e50')
-      .text('Year (First Appearance)');
+      .text('Year of First Appearance');
 
   };
 
