@@ -1,5 +1,5 @@
 var margin = {top: 50, right: 100, bottom: 100, left: 100},
-  width = 800 - margin.left - margin.right,
+  width = 1100 - margin.left - margin.right,
   height = 600 - margin.top - margin.bottom;
 
 var chart = d3.select('#chart')
@@ -140,12 +140,16 @@ d3.json('data.json', function(error, dataset) {
       .attr('text-anchor', 'middle')  // this makes it easy to center the text as the transform is applied to the anchor
       .attr('transform', 'translate(' + -margin.left/1.5 + ',' + (height/2) + ')rotate(-90)')  // text is drawn off the screen top left, move down and out and rotate
       .attr('fill', '#2c3e50')
-      .text('Number of Repositories (log scale)');
+      .attr('font-family', 'sans-serif')
+      .attr('font-size', '14px')
+      .text('# of Repositories (log scale)');
 
     chart.append('text')
       .attr('text-anchor', 'middle')  // this makes it easy to centre the text as the transform is applied to the anchor
       .attr('transform', 'translate(' + (width/2) + ',' + (height + (margin.bottom/2)) + ')')  // centre below axis
       .attr('fill', '#2c3e50')
+      .attr('font-family', 'sans-serif')
+      .attr('font-size', '14px')
       .text('Year of First Appearance');
 
   };
